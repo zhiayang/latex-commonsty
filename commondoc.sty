@@ -1,0 +1,549 @@
+% commondoc.sty
+% Copyright (c) 2014 - 2019, zhiayang
+% Licensed under the Apache License Version 2.0.
+
+
+
+% warning: due to the fonts used and the margin spacing configuration, the complete path (section.subsection.subsubsection) should
+% not have more than one component with double digits. for example: 1.10.3 is fine, 14.3.1 is fine, but 12.4.19 will probably be too
+% long to fit, and 10.34.13 will definitely cause hbox overflows, and look fugly.
+% potential solutions are:
+% 1. increase the margin size
+% 2. decrease the font size
+% 3. right-align the numbers, and increase the margin size
+
+
+
+
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{commondoc}[2013/01/13 Custom Package]
+
+\RequirePackage[a4paper, top=22.5mm, bottom=25.0mm, left=25.0mm, right=25.0mm, headheight=15pt]{geometry}
+\RequirePackage[ampersand]{easylist}
+\RequirePackage[usenames,dvipsnames]{xcolor}
+\RequirePackage{graphicx}
+\RequirePackage{tabu}
+\RequirePackage{tikz}
+\RequirePackage{tabto}
+\RequirePackage{enumitem}
+\RequirePackage{longtable}
+\RequirePackage{etoolbox}
+\RequirePackage{tocloft}
+\RequirePackage{setspace}
+\RequirePackage{afterpage}
+\RequirePackage{array}
+\RequirePackage{pgfplots}
+\RequirePackage[newfloat]{minted}
+\RequirePackage[autostyle=false, style=british, strict=true]{csquotes}
+\RequirePackage{xfrac}
+\RequirePackage{newunicodechar}
+\RequirePackage{ulem}
+\RequirePackage{ifoddpage}
+\RequirePackage{xparse}
+\RequirePackage{datetime2}
+\RequirePackage{multirow}
+\RequirePackage[makeroom]{cancel}
+\RequirePackage[newparttoc, clearempty]{titlesec}
+\RequirePackage{siunitx}
+
+\RequirePackage{fontspec}
+\RequirePackage{amsmath}
+\RequirePackage{unicode-math}
+\RequirePackage{luatexbase}
+\RequirePackage{microtype}
+
+\RequirePackage{scrextend}
+\RequirePackage[bottom]{footmisc}
+\RequirePackage{caption}
+
+\RequirePackage{xpatch}
+\RequirePackage{fancyhdr}
+\RequirePackage{expl3}
+
+\RequirePackage[pdfencoding=auto,plainpages=false,pdfpagelabels,psdextra,hidelinks,unicode]{hyperref}
+\RequirePackage{bookmark}
+
+\ProcessOptions\relax
+
+\widowpenalty10000
+\clubpenalty10000
+
+
+\usetikzlibrary{arrows,automata,calc,patterns,positioning,decorations,matrix}
+\usepgfplotslibrary{fillbetween}
+
+\pgfplotsset{
+	compat                  = 1.16,
+	samples                 = 100,
+	scaled ticks            = false,
+	width                   = 100mm,
+	height                  = 60mm,
+	clip                    = false,
+	filter discard warning  = true
+}
+
+% style settings
+
+\makeatletter
+	\def\@seccntformat#1{\protect\makebox[0pt][r]{\csname
+	the#1\endcsname\quad}}
+\makeatother
+
+\newcommand\blankpage{%
+	\null
+	\thispagestyle{empty}%
+	\addtocounter{page}{-1}%
+	\newpage}
+
+\newcommand\immediateaddcontentsline[3]{%
+	\begingroup
+	\let\origwrite\write
+	\def\write{\immediate\origwrite}%
+	\addcontentsline{#1}{#2}{#3}%
+	\endgroup
+}
+
+
+
+\newfontfamily\Roboto[
+	UprightFont     = Roboto-Light,
+	ItalicFont      = Roboto-LightItalic,
+	BoldFont        = Roboto,
+	BoldItalicFont  = Roboto-Italic]{Roboto-Light}
+
+\newfontfamily\RobotoThin[
+	UprightFont     = Roboto-Thin,
+	ItalicFont      = Roboto-ThinItalic,
+	BoldFont        = Roboto-Light,
+	BoldItalicFont  = Roboto-LightItalic]{Roboto-Thin}
+
+\newfontfamily\Alexandria[
+	UprightFont     = AlexandriaFLF,
+	ItalicFont      = AlexandriaFLF-Italic,
+	BoldFont        = AlexandriaFLF-Bold,
+	BoldItalicFont  = AlexandriaFLF-BoldItalic]{AlexandriaFLF}
+
+\newfontfamily\MyriadPro[
+	UprightFont     = MyriadPro-Regular,
+	ItalicFont      = MyriadPro-It,
+	BoldFont        = MyriadPro-Bold,
+	BoldItalicFont  = MyriadPro-BoldIt
+]{MyriadPro-Regular}
+
+\defaultfontfeatures{Ligatures=TeX}
+
+\setsansfont[Scale=MatchLowercase]{MyriadPro-Regular}
+
+\setmainfont[Scale=MatchLowercase,
+	UprightFont     = XCharter-Roman,
+	ItalicFont      = XCharter-Italic,
+	BoldFont        = XCharter-Bold,
+	BoldItalicFont  = XCharter-BoldItalic]{XCharter}
+
+\setmathfont[Scale=MatchLowercase]{STIX Two Math}
+
+\defaultfontfeatures{}
+\setmonofont[Scale=MatchLowercase]{Dejavu Sans Mono}
+
+
+\newlength\titleNumberInsetLength
+\setlength\titleNumberInsetLength{12.5mm}
+
+
+\makeatletter
+\g@addto@macro \normalsize {%
+	\setlength\abovedisplayskip{0em}%
+	\setlength\belowdisplayskip{0em}%
+}
+\makeatother
+
+
+
+\newcolumntype{N}{@{}m{0pt}@{}}
+
+\setstretch{1.05}
+
+\newcommand*{\sethead}{\fancyhead[C]{\thedocumentclassification}\fancyhead[R]{Part \arabic{part} - \parttitle}}
+\newcommand*{\setfoot}{\fancyfoot[C]{\thedocumentclassification}\fancyfoot[R]{\thepage}}
+
+\makeatletter
+\newcommand*{\ensureoddpage}{\checkoddpage\@ifoddpage{}{\newpage}}
+\makeatother
+
+\titleformat{\part}[display]
+	{\fancyhf{}\ensureoddpage\setfoot\Roboto\fontsize{40pt}{48pt}\selectfont\afterpage{\sethead}}
+	{\Roboto\fontsize{22pt}{26pt}\selectfont\hfill PART\hspace{5mm}\normalfont\Alexandria\fontsize{30pt}{36pt}\selectfont\raisebox{0mm}{\thepart}}
+	{-0.7em}
+	{\vspace{5mm}}
+	[\vspace{-5.0mm}{\makebox[0mm][l]{\rule[10mm]{\textwidth}{0.5mm}}}\vspace{15mm}]
+
+\titleformat{\section}
+	{\Roboto\fontsize{25pt}{30pt}\selectfont}
+	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesection\hfill}}
+	{0.0em}
+	{}
+	[{\makebox[0mm][l]{}}]
+
+\titleformat{\subsection}
+	{\Roboto\fontsize{21pt}{25pt}\selectfont}
+	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesubsection\hfill}}
+	{0.0em}
+	{}
+	[{\makebox[0mm][l]{}}]
+
+\titleformat{\subsubsection}
+	{\Roboto\fontsize{18pt}{22pt}\selectfont}
+	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesubsubsection\hfill}}
+	{0.0em}
+	{}
+	[{\makebox[0mm][l]{}}]
+
+\titleformat{\paragraph}
+	{\Roboto\fontsize{15pt}{18pt}\selectfont}
+	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\hfill}}
+	{0.0em}
+	{}
+	[{\makebox[0mm][l]{}}]
+
+
+
+
+
+
+
+
+
+
+
+
+\titlespacing*{\part}{0mm}{-12mm}{-20mm}
+\titlespacing*{\section}{0mm}{5mm}{-18.5mm}
+\titlespacing*{\subsection}{0mm}{5mm}{-17mm}
+\titlespacing*{\subsubsection}{0mm}{5mm}{-15.5mm}
+\titlespacing*{\paragraph}{0mm}{0mm}{-13mm}
+
+\makeatletter
+	\@addtoreset{section}{part}
+\makeatother
+
+
+\renewcommand{\cftpartfont}{\Roboto\fontsize{24pt}{28pt}\selectfont}
+\renewcommand{\cftpartaftersnum}{.}
+\renewcommand{\cftsecaftersnum}{.}
+
+\renewcommand{\cftpartpresnum}{\normalfont\Alexandria\fontsize{24pt}{28pt}\selectfont}
+
+
+\setlength{\cftpartnumwidth}{6em}
+\setlength{\cftsecnumwidth}{2.0em}
+
+\renewcommand{\cftpartindent}{-2.6em}
+\renewcommand{\cftsecindent}{1.5em}
+\renewcommand{\cftsubsecindent}{3.5em}
+\renewcommand{\cftsubsubsecindent}{6.1em}
+
+
+\renewcommand{\cfttoctitlefont}{\hfill\Roboto\fontsize{35pt}{42pt}\selectfont}
+\renewcommand{\contentsname}{\hfill Contents\hfill}
+\renewcommand{\cftaftertoctitle}{\hfill}
+
+\renewcommand{\cftdot}{·}
+
+
+\cftpagenumbersoff{part}
+
+\sisetup{
+	detect-all = true
+}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{\baselineskip}
+\setlength{\abovecaptionskip}{0mm plus 2mm minus 2mm}
+\setlength{\belowcaptionskip}{5mm plus 2mm minus 2mm}
+
+\setlist{nosep}
+
+
+\deffootnote{10mm}{1.6em}{[\thefootnotemark]\hspace{4mm}}
+
+
+
+% \input{Commands}
+
+\overfullrule=0.5mm
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead{}
+\renewcommand{\headrulewidth}{0pt}
+\rfoot{\thepage}
+
+\raggedbottom
+
+
+
+\newcommand*\parttitle{}
+\let\origpart\part
+\renewcommand*{\part}[2][]{%
+\ifx\\#1\\% optional argument not present?
+	\origpart{#2}%
+	\renewcommand*\parttitle{#2}%
+\else
+	\origpart[#1]{#2}%
+	\renewcommand*\parttitle{#1}%
+\fi
+}
+
+
+\DeclareSIUnit{\atm}{atm}
+\DeclareSIUnit{\knot}{kt}
+\DeclareSIUnit{\molarConc}{\mole\per\cubic\deci\metre}
+\DeclareSIUnit{\kJmol}{\kilo\joule\per\mole}
+
+\sisetup{retain-explicit-plus = true}
+
+
+\DeclareInstance{xfrac}{x}{text}
+{
+	scale-factor        = 1.1,
+	numerator-bot-sep   = 0.5em,
+	denominator-bot-sep = 0.5em,
+	slash-left-kern     = 0.1em
+}
+
+\newcommand{\fracHalf}      {$\sfrac{1}{2}$\hspace{1mm}}
+\newcommand{\fracThreeTwo}  {$\sfrac{3}{2}$\hspace{1mm}}
+
+% helper macros
+
+\newcommand{\normtext}      {\normalfont\fontsize{11pt}{13pt}\selectfont}
+\newcommand{\normfont}      {\normalfont\selectfont}
+
+\makeatletter
+\newcommand*{\fsize}        {\dimexpr\f@size pt\relax}
+\makeatother
+
+\newcommand{\romannum}      [1]{{\Alexandria\selectfont\ifdimless{\the\fsize}{11pt}{\textbf{#1}}{#1}}}
+
+\newcommand{\hugetext}      [1]{{\RobotoThin\fontsize{50pt}{60pt}\selectfont#1\normtext\ignorespaces}}
+\newcommand{\subtext}       [1]{{\fontsize{23pt}{28pt}\selectfont \textsf{#1} \normtext\ignorespaces}}
+\newcommand{\tinytext}      [1]{{\fontsize{10pt}{12pt}\selectfont \textsf{#1} \normtext\ignorespaces}}
+
+\newcommand{\sbs}           [1]{\textsubscript{#1}}
+\newcommand{\sps}           [1]{\textsuperscript{#1}}
+
+\newcommand{\spbs}          [2]{\rlap{\sps{#1}}\sbs{#2}}
+
+\newcommand{\img}           [2]{\includegraphics[width=#1]{#2}}
+\newcommand{\imgdiagram}    [3]{\begin{figure}[!htbp]\begin{center}\includegraphics[width=#1]{#2}\linebreak
+								\fontsize{10pt}{12pt}\selectfont{#3}\normtext
+								\end{center}\end{figure}}
+
+\newcommand{\itl}           [1]{\textit{#1}}
+\newcommand{\bld}           [1]{\textbf{#1}}
+\newcommand{\boit}          [1]{\bld{\itl{#1}}}
+
+
+\newcommand {\includefigure}[3] {
+	\begin{figure}[!htbp]
+	\begin{center}
+	\mbox{
+		\vspace{5mm}
+		\includegraphics[width=#1]{#2}
+	}
+	\end{center}
+	\begin{center}
+	\fontsize{10pt}{12pt}\selectfont{#3}
+	\normtext\end{center}\end{figure}
+}
+
+
+
+
+
+%? uses xparse.
+\NewDocumentCommand{\diagram} { O{1.0} +m O{} }
+{
+	%* note that for diagrams (which we usually use to draw chemical structures),
+	%* we set the font to a sans-serif.
+
+	\begin{figure}[!htbp]
+	\begin{center}
+	\bigskip
+	\scalebox{#1}{
+		\mbox{
+			\normtext
+			\vspace{5mm}
+			{#2}
+		}
+	}
+	\end{center}
+	\begin{center}
+
+	\normalfont\fontsize{10pt}{12pt}\selectfont{#3}
+	\normtext\end{center}\end{figure}
+	\vspace{-5mm}
+}
+
+\NewDocumentCommand{\graphdiagram} { O{1.0} +m O{} }
+{
+	\begin{figure}[!htbp]
+	\begin{center}
+	\bigskip
+	\fontsize{12pt}{14pt}\selectfont
+	\scalebox{#1}{
+		\mbox{
+			\vspace{5mm}
+			{#2}
+		}
+	}
+	\end{center}
+	\begin{center}
+
+	\normalfont\fontsize{10pt}{12pt}\selectfont{#3}
+	\normtext\end{center}\end{figure}
+	\vspace{-5mm}
+}
+
+\NewDocumentCommand{\mathdiagram} { +m O{} }
+{
+	\begin{figure}[!htbp]
+	\begin{center}
+
+		\vspace{0.7em}
+		\fontsize{14pt}{17pt}\selectfont
+		{#1}
+
+	\end{center}
+
+	%* if the caption is empty, we insert some negative vertical space.
+	\ifblank{#2}{\vspace{-1.2em}}{
+		\begin{center}
+		\fontsize{10pt}{12pt}\selectfont{#2}
+		\normtext
+		\end{center}
+	}
+	\end{figure}
+}
+
+\newminted{c}{autogobble,xleftmargin=0.075\textwidth,xrightmargin=0.075\textwidth,frame=leftline,framesep=4mm,framerule=0.4mm,
+	linenos=true}
+\newminted{cpp}{autogobble,xleftmargin=0.075\textwidth,xrightmargin=0.075\textwidth,frame=leftline,framesep=4mm,framerule=0.4mm,
+	linenos=true}
+
+\newminted{text}{xleftmargin=0.075\textwidth,xrightmargin=0.075\textwidth,frame=leftline,framesep=4mm,framerule=0.4mm}
+
+\DeclareFloatingEnvironment[
+	fileext=lop,
+	listname={List of Packet Layouts},
+	name=Layout,
+	placement=!htbp
+]{pktlayout}
+
+\DeclareFloatingEnvironment[
+	fileext=los,
+	listname={List of Schematics},
+	name=Schematic,
+	placement=!htbp
+]{schmtc}
+
+\NewDocumentCommand{\thedocumentclassification}{}{\empty}
+
+\NewDocumentCommand{\setdocumentclassification}{m}{%
+	\RenewDocumentCommand{\thedocumentclassification}{}{#1}
+}
+
+
+\makeatletter
+\NewDocumentCommand{\listofpkts}{+m}{%
+	\paragraph*{#1}%
+		\@mkboth{%
+		\MakeUppercase#1}%
+		{\MakeUppercase#1}%
+	\@starttoc{lop}%
+}
+\let\l@pkt\l@figure
+
+\NewDocumentCommand{\listofcods}{+m}{%
+	\paragraph*{#1}%
+		\@mkboth{%
+		\MakeUppercase#1}%
+		{\MakeUppercase#1}%
+	\@starttoc{lol}%
+}
+\let\l@cod\l@figure
+
+\NewDocumentCommand{\listofschms}{+m}{%
+	\paragraph*{#1}%
+		\@mkboth{%
+		\MakeUppercase#1}%
+		{\MakeUppercase#1}%
+	\@starttoc{los}%
+}
+\let\l@schm\l@figure
+\makeatother
+
+\NewDocumentEnvironment{packet}{}
+{%
+	\vspace{5mm}%
+	\begin{pktlayout}\centering%
+}
+{%
+	\end{pktlayout}%
+}
+
+\NewDocumentEnvironment{schematic}{}
+{%
+	\vspace{5mm}%
+	\begin{schmtc}\centering%
+}
+{%
+	\end{schmtc}%
+}
+
+
+
+\NewDocumentEnvironment{innertable}{ O{1.3} O{0.8} +m }
+{%
+	\renewcommand{\arraystretch}{#1}\begin{center}%
+	\begin{tabu} to #2 { #3 }%
+}%
+{%
+	\end{tabu}\end{center}%
+}
+
+\NewDocumentEnvironment{nicetable}{ O{1.3} O{0.8} +m O{-1em} }
+{%
+	\begin{table}[!htbp]\renewcommand{\arraystretch}{#1}\begin{center}%
+	\begin{tabu} to #2 { #3 }%
+}%
+{%
+	\end{tabu}\end{center}%
+	\end{table}\vspace{#4}%
+}
+
+\newenvironment{bulletlist}
+{
+	\begin{easylist}[itemize]
+	\ListProperties(Space*=-1.0em, Space=-1.0em)
+}
+{\end{easylist}}
+
+
+\newenvironment{romanlist}
+{
+	\begin{easylist}[enumerate]
+	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=r)
+}
+{\end{easylist}}
+
+\newenvironment{numberedlist}
+{
+	\begin{easylist}[enumerate]
+	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=a)
+}
+{\end{easylist}}
+
+
+
+\endinput
