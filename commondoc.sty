@@ -68,6 +68,8 @@
 \widowpenalty10000
 \clubpenalty10000
 
+% this is necessary so minted doesn't create fucky-wucky files on windows
+\renewcommand{\DeleteFile}[2][]{}
 
 \usetikzlibrary{arrows,automata,calc,patterns,positioning,decorations,matrix}
 \usepgfplotslibrary{fillbetween}
