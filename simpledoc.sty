@@ -40,7 +40,7 @@
 \RequirePackage{multirow}
 \RequirePackage[makeroom]{cancel}
 \RequirePackage[newparttoc, clearempty]{titlesec}
-\RequirePackage{siunitx}
+\RequirePackage[binary-units = true]{siunitx}
 \RequirePackage{fancyhdr}
 
 \RequirePackage{scrextend}
@@ -140,21 +140,21 @@
 \newcommand*{\setfoot}{\fancyfoot[C]{\thedocumentclassification}\fancyfoot[R]{\thepage}}
 
 \titleformat{\section}
-	{\Roboto\fontsize{25pt}{30pt}\selectfont}
+	{\Roboto\fontsize{19pt}{27pt}\selectfont}
 	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesection\hfill}}
 	{0.0em}
 	{}
 	[{\makebox[0mm][l]{}}]
 
 \titleformat{\subsection}
-	{\Roboto\fontsize{21pt}{25pt}\selectfont}
+	{\Roboto\fontsize{17pt}{24pt}\selectfont}
 	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesubsection\hfill}}
 	{0.0em}
 	{}
 	[{\makebox[0mm][l]{}}]
 
 \titleformat{\subsubsection}
-	{\Roboto\fontsize{18pt}{22pt}\selectfont}
+	{\Roboto\fontsize{15pt}{22pt}\selectfont}
 	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesubsubsection\hfill}}
 	{0.0em}
 	{}
@@ -203,6 +203,7 @@
 \deffootnote{10mm}{1.6em}{[\thefootnotemark]\hspace{4mm}}
 
 
+\setminted{autogobble=true,tabsize=4,obeytabs=true}
 
 % \input{Commands}
 
@@ -245,7 +246,8 @@
 \newcommand{\img}           [2]{\includegraphics[width=#1]{#2}}
 \newcommand{\imgdiagram}    [3]{\begin{figure}[!htbp]\begin{center}\includegraphics[width=#1]{#2}\linebreak
 								\fontsize{10pt}{12pt}\selectfont{#3}\normtext
-								\end{center}\end{figure}}
+								\end{center}\end{figure}
+								}
 
 \newcommand{\itl}           [1]{\textit{#1}}
 \newcommand{\bld}           [1]{\textbf{#1}}
@@ -325,6 +327,13 @@
 }
 {\end{easylist}}
 
+
+\newenvironment{alphalist}
+{
+	\begin{easylist}[enumerate]
+	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=l)
+}
+{\end{easylist}}
 
 \newenvironment{romanlist}
 {
