@@ -320,34 +320,66 @@
 	\end{table}\vspace{#4}%
 }
 
+
+% old environments, for backward compatibility.
 \newenvironment{bulletlist}
 {
 	\begin{easylist}[itemize]
 	\ListProperties(Space*=-1.0em, Space=-1.0em)
 }
 {\end{easylist}}
-
-
 \newenvironment{alphalist}
 {
 	\begin{easylist}[enumerate]
 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=l)
 }
 {\end{easylist}}
-
 \newenvironment{romanlist}
 {
 	\begin{easylist}[enumerate]
 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=r)
 }
 {\end{easylist}}
-
 \newenvironment{numberedlist}
 {
 	\begin{easylist}[enumerate]
 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=a)
 }
 {\end{easylist}}
+
+
+
+
+% new environments with saner defaults.
+\newenvironment{bulletlist2}
+{
+	\vspace{-1em}
+	\begin{easylist}[itemize]
+	\ListProperties(Space*=-1.0em, Space=-1.0em, Hang=true)
+}
+{\end{easylist}}
+\newenvironment{alphalist2}
+{
+	\vspace{-1em}
+	\begin{easylist}[enumerate]
+	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=l, Hang=true, Numbers2=r)
+}
+{\end{easylist}}
+\newenvironment{romanlist2}
+{
+	\vspace{-1em}
+	\begin{easylist}[enumerate]
+	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=r, Hang=true, Numbers2=l)
+}
+{\end{easylist}}
+\newenvironment{numberedlist2}
+{
+	\vspace{-1em}
+	\begin{easylist}[enumerate]
+	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=a, Hang=true, Numbers2=l)
+}
+{\end{easylist}}
+
 
 
 
