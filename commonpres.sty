@@ -17,6 +17,7 @@
 \RequirePackage{tikz}
 \RequirePackage{tabu}
 \RequirePackage{setspace}
+\RequirePackage{tabularray}
 \RequirePackage[autostyle=false, style=british, strict=true]{csquotes}
 
 \newfontfamily\XCharter[
@@ -39,6 +40,18 @@
 	\end{tabu}\end{center}%
 	\end{table}\vspace{#4}%
 }
+
+\NewDocumentEnvironment{nicetable2}{ +m }
+{%
+	\begin{figure}[!htbp]\begin{center}
+	\begin{tblr}{#1}
+}%
+{%
+	\end{tblr}
+	\end{center}\end{figure}
+}
+
+
 
 \NewDocumentEnvironment{itemise}{}{%
 	\begin{itemize}%
