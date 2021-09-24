@@ -16,7 +16,7 @@
 % 3. right-align the numbers, and increase the margin size
 
 \NeedsTeXFormat{LaTeX2e}[1994/06/01]
-\ProvidesPackage{simpledoc}[2013/01/13 Custom Package]
+\ProvidesPackage{simpledoc}[2021/07/28 Simple Document Style]
 
 \RequirePackage[a4paper, top=22.5mm, bottom=25.0mm, left=25.0mm, right=25.0mm, headheight=15pt]{geometry}
 \RequirePackage[ampersand]{easylist}
@@ -34,7 +34,7 @@
 \RequirePackage[newfloat]{minted}
 \RequirePackage[autostyle=false, style=british, strict=true]{csquotes}
 \RequirePackage{newunicodechar}
-\RequirePackage{ulem}
+\RequirePackage[normalem]{ulem}
 \RequirePackage{xparse}
 \RequirePackage{datetime2}
 \RequirePackage{multirow}
@@ -59,6 +59,9 @@
 
 \RequirePackage[pdfencoding=auto,plainpages=false,pdfpagelabels,psdextra,hidelinks,unicode]{hyperref}
 \RequirePackage{bookmark}
+
+\RequirePackage{tabularray}
+\RequirePackage{titling}
 
 \ProcessOptions\relax
 
@@ -140,39 +143,39 @@
 \newcommand*{\setfoot}{\fancyfoot[C]{\thedocumentclassification}\fancyfoot[R]{\thepage}}
 
 \titleformat{\section}
-	{\Roboto\fontsize{19pt}{27pt}\selectfont}
+	{\MyriadPro\fontsize{19pt}{27pt}\selectfont}
 	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesection\hfill}}
 	{0.0em}
 	{}
 	[{\makebox[0mm][l]{}}]
 
 \titleformat{\subsection}
-	{\Roboto\fontsize{17pt}{24pt}\selectfont}
+	{\MyriadPro\fontsize{17pt}{24pt}\selectfont}
 	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesubsection\hfill}}
 	{0.0em}
 	{}
 	[{\makebox[0mm][l]{}}]
 
 \titleformat{\subsubsection}
-	{\Roboto\fontsize{15pt}{22pt}\selectfont}
+	{\MyriadPro\fontsize{15pt}{22pt}\selectfont}
 	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\thesubsubsection\hfill}}
 	{0.0em}
 	{}
 	[{\makebox[0mm][l]{}}]
 
 \titleformat{\paragraph}
-	{\Roboto\fontsize{15pt}{18pt}\selectfont}
+	{\MyriadPro\fontsize{13.5pt}{16pt}\selectfont}
 	{\llap{\hspace*{-\titleNumberInsetLength}\MyriadPro\fontsize{12pt}{14pt}\selectfont\hfill}}
 	{0.0em}
 	{}
 	[{\makebox[0mm][l]{}}]
 
 
-
-\titlespacing*{\section}{0mm}{5mm}{-18.5mm}
-\titlespacing*{\subsection}{0mm}{5mm}{-17mm}
-\titlespacing*{\subsubsection}{0mm}{5mm}{-15.5mm}
-\titlespacing*{\paragraph}{0mm}{0mm}{-13mm}
+% congratulations, we just screwed over everybody else using this style file by changing these values.
+\titlespacing*{\section}{0mm}{0mm}{-19mm}
+\titlespacing*{\subsection}{0mm}{0mm}{-19mm}
+\titlespacing*{\subsubsection}{0mm}{0mm minus 2mm}{-19mm}
+\titlespacing*{\paragraph}{0mm}{0mm}{-17mm}
 
 \setlength{\cftsecnumwidth}{2.0em}
 
@@ -181,7 +184,7 @@
 \renewcommand{\cftsubsecindent}{3.5em}
 \renewcommand{\cftsubsubsecindent}{6.1em}
 
-\renewcommand{\cfttoctitlefont}{\hfill\Roboto\fontsize{35pt}{42pt}\selectfont}
+\renewcommand{\cfttoctitlefont}{\hfill\MyriadPro\fontsize{24pt}{30pt}\selectfont}
 \renewcommand{\contentsname}{\hfill Contents\hfill}
 \renewcommand{\cftaftertoctitle}{\hfill}
 
@@ -321,6 +324,7 @@
 }
 
 
+
 % old environments, for backward compatibility.
 \newenvironment{bulletlist}
 {
@@ -351,36 +355,83 @@
 
 
 % new environments with saner defaults.
-\newenvironment{bulletlist2}
-{
+\NewDocumentEnvironment{bulletlist2}{ !o }{
 	\vspace{-1em}
 	\begin{easylist}[itemize]
 	\ListProperties(Space*=-1.0em, Space=-1.0em, Hang=true)
-}
-{\end{easylist}}
-\newenvironment{alphalist2}
-{
+	\IfValueT{#1}{\ListProperties(#1)}
+}{\end{easylist}}
+
+\NewDocumentEnvironment{alphalist2}{ !o }{
 	\vspace{-1em}
 	\begin{easylist}[enumerate]
 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=l, Hang=true, Numbers2=r)
-}
-{\end{easylist}}
-\newenvironment{romanlist2}
-{
+	\IfValueT{#1}{\ListProperties(#1)}
+}{\end{easylist}}
+
+\NewDocumentEnvironment{romanlist2}{ !o }{
 	\vspace{-1em}
 	\begin{easylist}[enumerate]
 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=r, Hang=true, Numbers2=l)
-}
-{\end{easylist}}
-\newenvironment{numberedlist2}
-{
+	\IfValueT{#1}{\ListProperties(#1)}
+}{\end{easylist}}
+
+\NewDocumentEnvironment{numberedlist2}{ !o }{
 	\vspace{-1em}
 	\begin{easylist}[enumerate]
 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=a, Hang=true, Numbers2=l)
+	\IfValueT{#1}{\ListProperties(#1)}
+}{\end{easylist}}
+
+
+
+% \newenvironment{bulletlist2}
+% {
+% 	\vspace{-1em}
+% 	\begin{easylist}[itemize]
+% 	\ListProperties(Space*=-1.0em, Space=-1.0em, Hang=true, #1)
+% }
+% {\end{easylist}}
+% \newenvironment{alphalist2}
+% {
+% 	\vspace{-1em}
+% 	\begin{easylist}[enumerate]
+% 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=l, Hang=true, Numbers2=r)
+% }
+% {\end{easylist}}
+% \newenvironment{romanlist2}
+% {
+% 	\vspace{-1em}
+% 	\begin{easylist}[enumerate]
+% 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=r, Hang=true, Numbers2=l)
+% }
+% {\end{easylist}}
+% \newenvironment{numberedlist2}
+% {
+% 	\vspace{-1em}
+% 	\begin{easylist}[enumerate]
+% 	\ListProperties(Space*=-1.0em, Space=-1.0em, Numbers=a, Hang=true, Numbers2=l)
+% }
+% {\end{easylist}}
+
+
+
+\UseTblrLibrary{siunitx}
+
+\NewDocumentEnvironment{nicetable2}{ +m }
+{%
+	\begin{figure}[!htbp]\begin{center}
+	\begin{tblr}{#1}
+}%
+{%
+	\end{tblr}
+	\end{center}\end{figure}
 }
-{\end{easylist}}
 
-
-
+\newcommand\blankpage{%
+	\null
+	\thispagestyle{empty}%
+	\addtocounter{page}{-1}%
+	\newpage}
 
 \endinput
